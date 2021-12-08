@@ -72,10 +72,8 @@ st.write('ARIMA Test RMSE: %.3f' % rmse)
 
 
 # ________________ #
-# Predicton values for Linear and Polynomial Regressions
 
 new_date=[]
-
 n = st.number_input("Enter the number of days (no decimal) to see the model forecast")
 
 for i in range(1,int(n)+1):
