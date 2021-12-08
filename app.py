@@ -19,28 +19,11 @@ import pymongo
 st.set_page_config(page_title='Time Series forcasting App',
     layout='wide')
 
-#---------------------------------#
-# Model building
-def build_model(arima):
-    X = us_cases_data_datewise.values[:,0]
-    train_size = int(len(X) * 0.66)
-    train, test = X[0:train_size], X[train_size:len(X)]
-    data = [x for x in train]
-
-    AR_predictions = []
-    new_date = []
-    # walk-forward validation
-    for t in range(len(test)):
-    model = ARIMA(data, order=(10,0,0)) # optimum value of p,d,q are determined using grid search
-    model_fit = model.fit()
-    output = model_fit.forecast()
-    pred = output[0]
-    AR_predictions.append(pred)
-       
-    for i in range(1, 15):
-        new_date.append(us_cases_data_datewise.index[-1]+timedelta(days=i))
-        AR_predictions.append(model_fit.forecast((len(test)+i)))
-    print(AR_predictions)
+st.write("""
+# The Time Series Machine Learning App
+US COVID-19 cases dataset is used to train the time series ARIMA model.
+The following table shows the future forcasts of the number of days selected. Because of the datasize, it may take longer time to process the data if you choose too many days. 
+""")
 
 #---------------------------------#
 # importing dataset
@@ -63,8 +46,42 @@ us_cases_data_datewise["days_since_case"]= us_cases_data_datewise.index - us_cas
 us_cases_data_datewise["days_since_case"]= us_cases_data_datewise["days_since_case"].dt.days
 us_cases_data_datewise['days_since_case'] = pd.DataFrame(us_cases_data_datewise, columns =['days_since_case'])
 
-st.write("""
-# The Machine Learning App
-The *ARIMA * model is used for building an algorithm. The forcasts for 15 days is displayed.
-""")
-build_model(arima)
+# Model building
+
+X = us_cases_data_datewise.values[:,0]
+train_size = int(len(X) * 0.66)
+train, test = X[0:train_size], X[train_size:len(X)]
+
+data = [x for x in train]
+predictions = []
+
+# walk-forward validation
+for t in range(len(test)):
+    model = ARIMA(data, order=(10,0,0)) # obtained the parameters from grid search
+    model_fit = model.fit()
+    output = model_fit.forecast()
+    AR_pred = output[0]
+    predictions.append(AR_pred)
+    obs = test[t]
+    data.append(obs)
+    # st.write('predicted=%f, expected=%f' % (AR_pred, obs))
+
+# evaluating predictions 
+rmse = sqrt(mean_squared_error(test, predictions))
+st.write('ARIMA Test RMSE: %.3f' % rmse)
+
+
+# ________________ #
+# Predicton values for Linear and Polynomial Regressions
+
+new_date=[]
+
+n = st.number_input("Enter the number of days (no decimal) to see the model forecast")
+
+for i in range(1,int(n)+1):
+    new_date.append(us_cases_data_datewise.index[-1]+timedelta(days=i))
+
+pd.set_option('display.float_format', lambda x: '%.3f' % x)
+model_forecast=pd.DataFrame(zip(new_date,predictions),
+                               columns=["Dates","ARIMA forecast"])
+st.table(model_forecast)
