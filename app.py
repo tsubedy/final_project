@@ -20,7 +20,7 @@ st.set_page_config(page_title='Time Series forcasting App',
     layout='wide')
 
 st.write("""
-# The Time Series Machine Learning App
+# Time Series Machine Learning App
 US COVID-19 cases dataset is used to train the time series ARIMA model.
 The following table shows the future forcasts of the number of days selected. Because of the datasize, it may take longer time to process the data if you choose too many days. 
 """)
@@ -57,7 +57,7 @@ predictions = []
 
 # walk-forward validation
 for t in range(len(test)):
-    model = ARIMA(data, order=(10,0,0)) # obtained the parameters from grid search
+    model = ARIMA(data, order=(1,0,0)) # obtained the parameters from grid search
     model_fit = model.fit()
     output = model_fit.forecast()
     AR_pred = output[0]
@@ -69,9 +69,6 @@ for t in range(len(test)):
 # evaluating predictions 
 rmse = sqrt(mean_squared_error(test, predictions))
 st.write('ARIMA Test RMSE: %.3f' % rmse)
-
-
-# ________________ #
 
 new_date=[]
 n = st.number_input("Enter the number of days (no decimal) to see the model forecast")
