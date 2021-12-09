@@ -27,7 +27,7 @@ The following table shows the future forcasts of the number of days selected. Be
 
 #---------------------------------#
 # importing dataset
-client = pymongo.MongoClient("mongodb://localhost:27017")
+client = pymongo.MongoClient("mongodb+srv://tsubedy:TS24751@cluster1.ppbek.mongodb.net/?retryWrites=true&w=majority")
 db = client["us_cases_db"]
 collection = db.us_cases
 cursor = collection.find()
