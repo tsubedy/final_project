@@ -1,12 +1,10 @@
-matplotlib @ file:///C:/ci/matplotlib-suite_1613408055530/work
+matplotlib==3.3.4 
 numpy==1.21.4
-pandas @ file:///C:/ci/pandas_1618365634936/work
+pandas==1.2.4
 plotly==5.3.1
 pmdarima==1.8.4
 pymongo==3.12.0
-scikit-learn @ file:///C:/ci/scikit-learn_1614446896245/work
-scipy @ file:///C:/ci/scipy_1618856128765/work
+scikit-learn==0.24.1 
 statsmodels==0.12.2
 streamlit==1.2.0
-toml @ file:///tmp/build/80754af9/toml_1616166611790/work
-urllib3 @ file:///tmp/build/80754af9/urllib3_1615837158687/work
+urllib3==1.26.4
