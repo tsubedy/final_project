@@ -1,7 +1,7 @@
 # Time Series analysis and forecasting of COVID -19 Cases in the US
 
 
-On January 20, 2020 CDC confirms the first U.S. case of COVID-19 in the U.S. in Washington state. Since then the number of caovid-19 cases have been increasing exponentialy. CDC and other organisations are reporting number of cases, hospitalizations, and death data on daily basis. After almost a year later, the COVID vaccines are made available to public. As the vaccines are adminsitered, the cases were declining. By the end of summer 2021, the cases were reported low. Again, another strain of COVID-19, came out and the cases started going up as a second cycle. Currently, another form of mutation has evolved and the number of cases are growing. 
+On January 23, 2020 CDC recordss the first U.S. case of COVID-19 in the U.S. in Washington state. Since then the number of caovid-19 cases have been increasing exponentially. CDC and other organisations are reporting number of cases, hospitalizations, and death data on daily basis. After almost a year later, the COVID vaccines are made available to public. As the vaccines are adminsitered, the cases were declining. By the end of summer 2021, the cases were reported low. Again, another strain of COVID-19, came out and the cases started going up as a second cycle. Currently, another form of mutation has evolved and the number of cases are growing. 
 
 Once I observed the datasets, I can clearly see that they are time series records and not linear. I decided to choose the COVID cases data and look their behaviour and attempted to get forecasts using a time series model using machine learning tools in Python.  
 
@@ -9,7 +9,7 @@ The main purpose of this project is to see if the COVID-19 cases data in US can 
 
 ## Data Processing:
 
-Data extraction is perormed using data API from the CDC website <https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36>. The data obatined in JSON format are then converted into Pandas DataFrame in Jupyter Notebook using Python codes. A new dataframe is created usign only necessary variables. The small sized dataset is then exported to MongoDB Altas for web hosting and in order to utilizing later for the web application. 
+Data extraction is performed using data API from the CDC website <https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36>. The data obatined in JSON format are then converted into Pandas DataFrame in Jupyter Notebook using Python codes. A new dataframe is created usign only necessary variables. The small sized dataset is then exported to MongoDB Altas for web hosting and in order to utilizing later for the web application. 
 
 Using Pandas dataframe, the dataset is then pulled from MongoDB server for preprocessing and analysis. 
 
@@ -22,48 +22,53 @@ The analysis is performed in two stages
 
 ### Data Trend
 
-![Cases data over time](./images/us_cases_date.png)
+![Cases data over time](./images/us_cases_date.png){height = 50%,width=50%}
 
-![Death data over time](./images/us_death_date.png)
+![Death data over time](./images/us_death_date.png){height = 50%,width=50%}
 
-Both the cases and death data shows exactly similar trend. Highest number of daily records were in Dec 2020 and Jan 2021 and the lowest in Jun/July 2021. It is obvious that the new mutation COVID-19 delta strain hit after Aug 2021 and again the cases increased. Currently, the cases seem to higher than in last summer which could be the new mutation Omnicorn.
+Both the cases and death data shows exactly similar trend. Highest number of daily records were in Dec 2020/Jan 2021 and declined to lower in Jun/July 2021. It is obvious that the new mutation COVID-19 delta strain hit after Aug 2021 and again the cases increased. Currently, the cases seem to higher than in last summer which could be the new mutation Omnicorn. 
 
 ### Time Series
 
 Time Series is a data series of observations taken at equal time intervals. Analysis of the time series helps to predict future values based on previous observed values. 
-Time series data can be analysed in order to extract meaningful statistics.
 
 Before applying any statistical model on a Time Series data, the series has to be staionary, that means, over different time periods, It should have constant mean and variance and Auto-covariance should not depend on time. Trend and seasionality always make time series non-stationary. One of the technique to check if the series is stationary is Rolling average by ploting the moving average or moving standard deviation. 
 Linear Regression:
 
+#### 7 days Rolling Average on Cases and Death
+![Linear regression](./images/us_case_7days_rolling.png)
+
+#### Linear Regression on cases
 ![Linear regression](./images/us_case_linreg.png)
 
-Polynomial Regression
+#### Polynomial Regression on cases
 
 ![Polynomial regression](./images/us_case_polyreg.png)
 
-Support Vector Machine Model
+#### Support Vector Machine Model on cases
 
 ![Support Vector Machine](./images/us_case_svm.png)
 
-Holt's Model
+#### Holt's Model on cases
 
 ![Holt's model](./images/us_cases_holts_pred.png)
 
-Holt's Winter Model
+#### Holt's Winter Model on cases
 
 ![Holt's winter model](./images/us_cases_holts_winter_pred.png)
 
 
-#### ARIMA Model: 
+### ARIMA Model: 
 
 Auto Regressive Integrated Moving Average is a combination of two models AR and MA and has three hyperparameters - p(autoregrssive lags), d(order of differentiation), and q(moving average). These parameters are calculated using ACF (Auto Correlation Function) and PACF (partial Auto Correlation Function). Also, exponetional smoothing is a  procedure for making some determination based on prior assumptions such as seasonality.
 
-ARIMA Model
+The hyperparameters for the ARIMA model is then determined as p=10, d=2, and q = 2. This is the best fit model for this dataset with Test RMSE: 15344.664.
+
+#### ARIMA Model on cases
 
 ![ARIMA model](./images/us_cases_Arima_pred.png)
 
-Various Time Series models are tested and their forecasts number of cases are given as in the following table
+Various Time Series models are tested and their forecasts number of cases are given as in the following table. The predictions are based on the data until December 7th 2021. 
 
 |      Dates | Linear Prediction | Polynomial Prediction | SVM Prediction | Holt's Linear Prediction | Holt's Winter Model Prediction | ARIMA Model Prediction |
 |-----------:|------------------:|----------------------:|---------------:|-------------------------:|-------------------------------:|-----------------------:|
@@ -86,6 +91,11 @@ ARIMA model is then deployed using Streamlit
 
 ![ARIMA model](./images/modelDeployment.png)
 
+
+The deployed model is 
+https://share.streamlit.io/tsubedy/final_project/main/app.py
+
+(You may select the dataset and obtain the forcasted values)
 
 Prepared by - T Subedy
 

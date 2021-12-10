@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
@@ -17,20 +16,18 @@ from sklearn.metrics import mean_squared_error,r2_score
 from statsmodels.tsa.arima.model import ARIMA
 from math import sqrt
 import pymongo
-
+import base64
 #---------------------------------#
 # Page layout
 ## Page expands to full width
 st.set_page_config(page_title='Time Series forecasting App',
     layout='wide')
 
-
 st.write(""" # Time Series Forecasting App""") 
 st.write(""" ## **US COVID-19 Cases and Death** """)
 
 st.sidebar.title("Select Dataset ")
 st.markdown('<style>body{background-color: lightblue;}<style>', unsafe_allow_html=True)
-
 
 def load_data():
     # importing dataset
@@ -73,9 +70,10 @@ train, test = X[0:train_size], X[train_size:len(X)]
 data = [x for x in train]
 predictions = []
 
+
 # walk-forward validation
 for t in range(len(test)):
-    model = ARIMA(data, order=(10,0,0)) # obtained the parameters from grid search
+    model = ARIMA(data, order=(10,2,2)) # obtained the parameters from grid search
     model_fit = model.fit()
     output = model_fit.forecast()
     AR_pred = output[0]
@@ -87,7 +85,8 @@ for t in range(len(test)):
 # Plotting the predicted against test data
 
 fig=px.scatter(x=test, y=predictions)
-fig.update_layout(title="ARIMA Predicton vs Test", width=450, height=250)
+fig.update_layout(title="ARIMA Predicton vs Test", width=500, height=300)
+
 st.plotly_chart(fig)
 
 
@@ -96,9 +95,9 @@ rmse = sqrt(mean_squared_error(test, predictions))
 st.write('ARIMA Test RMSE: %.3f' % rmse)
 
 new_date=[]
-n = st.number_input("Enter number of days (no decimal) to get the model forecast")
+# n = st.number_input("Enter number of days (no decimal) to get the model forecast")
 
-
+n = st.sidebar.number_input('Enter number of days to forecast', min_value=1, max_value = None, )
 
 for i in range(1,int(n)+1):
     new_date.append(us_data_datewise.index[-1]+timedelta(days=i))
@@ -108,3 +107,11 @@ model_forecast=pd.DataFrame(zip(new_date,predictions),
                                columns=["Dates","ARIMA forecast"])
 st.table(model_forecast)
 
+st.sidebar.write("""
+####  Download the Forecast Data
+The link below allows you to download the newly created forecast data, as csv file 
+""")
+csv_exp = model_forecast.to_csv(index=False)
+b64 = base64.b64encode(csv_exp.encode()).decode()  # some strings <-> bytes conversions necessary here
+href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> '
+st.sidebar.markdown(href, unsafe_allow_html=True)
