@@ -26,7 +26,7 @@ The analysis is performed in two stages
 
 ![Death data over time](./images/us_death_date.png){height = 50%,width=50%}
 
-Both the cases and death data shows exactly similar trend. Highest number of daily records were in Dec 2020/Jan 2021 and declined to lower in Jun/July 2021. It is obvious that the new mutation COVID-19 delta strain hit after Aug 2021 and again the cases increased. Currently, the cases seem to higher than in last summer which could be the new mutation Omnicorn. 
+Both the cases and death data shows exactly similar trend. Highest number of daily records were in Dec 2020/Jan 2021 and declined to lower in Jun/July 2021. It is obvious that the new mutation COVID-19 delta strain hit after Aug 2021 and again the cases increased. Currently, the cases seem to higher than in last summer which could be the new mutation Omicron. 
 
 ### Time Series
 
